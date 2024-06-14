@@ -1,5 +1,7 @@
 package main.java.com.magicvet.model;
 
+import main.java.com.magicvet.Main;
+
 import java.util.Objects;
 
 public class Dog extends Pet {
@@ -7,6 +9,7 @@ public class Dog extends Pet {
     private Size size;
 
     public Dog() { }
+
 
     public Dog(Size size) {
         this.size = size;
@@ -46,6 +49,7 @@ public class Dog extends Pet {
         L(4),
         XL(5),
         UNKNOW(0);
+
 
         private final int value;
 

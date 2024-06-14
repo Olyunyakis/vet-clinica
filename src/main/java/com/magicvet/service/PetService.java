@@ -2,6 +2,7 @@ package main.java.com.magicvet.service;
 
 import main.java.com.magicvet.Main;
 import main.java.com.magicvet.model.Cat;
+import main.java.com.magicvet.model.Client;
 import main.java.com.magicvet.model.Dog;
 import main.java.com.magicvet.model.Pet;
 
@@ -43,7 +44,15 @@ public class PetService {
         if (type.equals(DOG_TYPE)) {
             System.out.println("Size (XS / S / M / L / XL): ");
             String size = Main.SCANNER.nextLine();
+            try {
             ((Dog) pet).setSize(Dog.Size.valueOf(size));
+            } catch (IllegalArgumentException e) {
+            size = String.valueOf(Client.Location.UNKNOWN);
+                System.out.println("Unable to parse value '" + size + "'. Using default value"
+                        + Client.Location.UNKNOWN);
+            }
+
+
         }
 
         return pet;

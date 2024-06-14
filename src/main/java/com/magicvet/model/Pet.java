@@ -80,5 +80,7 @@ public abstract class Pet {
         this.ownerName = ownerName;
     }
 
-    
+    public LocalDateTime getRegistrationDate() {
+        return registrationDate;
+    }
 }
