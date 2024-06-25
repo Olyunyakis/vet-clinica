@@ -7,9 +7,10 @@ import main.java.com.magicvet.service.ClientService;
 import main.java.com.magicvet.service.PetService;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class EntityRegister {
 
@@ -22,13 +23,12 @@ public class EntityRegister {
         String message = "Do you want to register more clients? (y/n): ";
 
         do {
-            Client client = addClient();
-            if (client != null) {
-                clients.add(client);
-            }
+            Optional<Client> client = addClient();
+            client.ifPresent(clients::add);
         } while (verifyRepeating(message));
 
-        Map<Client.Location, List<Client>> clientsByLocation = groupClients(clients);
+        Map<Client.Location, List<Client>> clientsByLocation = clients.stream()
+                .collect(Collectors.groupingBy(Client::getLocation));
         printClients(clientsByLocation);
     }
 
@@ -42,38 +42,10 @@ public class EntityRegister {
         }
     }
 
-    private Map<Client.Location, List<Client>> groupClients(List<Client> clients) {
-        List<Client> fromKyiv = new ArrayList<>();
-        List<Client> fromLyiv = new ArrayList<>();
-        List<Client> fromOdesa = new ArrayList<>();
-        List<Client> unknownLocatoin = new ArrayList<>();
+    private Optional<Client> addClient() {
+        Optional<Client> client = clientService.registerNewClian();
+        client.ifPresent(this::addPet);
 
-
-        for (Client client : clients) {
-            switch (client.getLocation()) {
-                case KYEV -> fromKyiv.add(client);
-                case LYIV -> fromLyiv.add(client);
-                case ODESA -> fromOdesa.add(client);
-                case UNKNOWN -> unknownLocatoin.add(client);
-            }
-        }
-
-        Map<Client.Location, List<Client>> clientsByLocation = new HashMap<>();
-        clientsByLocation.put(Client.Location.KYEV, fromKyiv);
-        clientsByLocation.put(Client.Location.LYIV, fromLyiv);
-        clientsByLocation.put(Client.Location.ODESA, fromOdesa);
-        clientsByLocation.put(Client.Location.UNKNOWN, unknownLocatoin);
-
-        return clientsByLocation;
-    }
-
-    private Client addClient() {
-        Client client = clientService.registerNewClian();
-
-        if (client != null) {
-            registerPets(client);
-            System.out.println(client);
-        }
         return client;
     }
 
@@ -83,6 +55,7 @@ public class EntityRegister {
 
         do  {
             addPet(client);
+            System.out.println(client);
         } while (verifyRepeating(message));
     }
 
